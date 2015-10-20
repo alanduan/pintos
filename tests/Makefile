@@ -52,16 +52,11 @@ p2: PROJECT = userprog
 p3: PROJECT = vm
 p4: PROJECT = filesys
 
-# Tests that just compile the provided code.
-threads::
+# Tests that compile and test the provided code.
+threads userprog vm filesys::
 	$(mk-sandbox)
 	$(compile)
-	$(run-tests) TESTS=tests/threads/alarm-single
-	$(test-clean)
-	$(clean)
-userprog vm filesys::
-	$(mk-sandbox)
-	$(compile)
+	$(run-tests)
 	$(test-clean)
 	$(clean)
 examples::
