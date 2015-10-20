@@ -573,14 +573,15 @@ EOF
     print_bochs_disk_line ("ata1-master", $disks[2]);
     print_bochs_disk_line ("ata1-slave", $disks[3]);
     if ($vga ne 'terminal') {
-	if ($serial) {
-	    my $mode = defined ($squish_pty) ? "term" : "file";
-	    print BOCHSRC "com1: enabled=1, mode=$mode, dev=/dev/stdout\n";
-	}
-	print BOCHSRC "display_library: nogui\n" if $vga eq 'none';
-    } else {
-	print BOCHSRC "display_library: term\n";
+	    if ($serial) {
+	      my $mode = defined ($squish_pty) ? "term" : "file";
+	      print BOCHSRC "com1: enabled=1, mode=$mode, dev=/dev/stdout\n";
+	    }
     }
+    # always use sdl, since term and x seem to be broken
+    # and nogui not present anymore (at least on Ubuntu 14.04 LTS)
+    print BOCHSRC "display_library: sdl\n";
+
     close (BOCHSRC);
 
     # Compose Bochs command line.
