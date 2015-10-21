@@ -5,8 +5,8 @@ bibliography.texi localsettings.texi
 
 all: pintos.html pintos.info pintos.dvi pintos.ps pintos.pdf
 
-pintos.html: $(TEXIS) texi2html
-	./texi2html -toc_file=$@ -split=chapter -nosec_nav -nomenu -init_file pintos-t2h.init $<
+pintos.html: $(TEXIS)
+	texi2html -toc_file=$@ -split=chapter -nosec_nav -nomenu -init_file pintos-t2h.init $<
 
 pintos.info: $(TEXIS)
 	makeinfo $<
