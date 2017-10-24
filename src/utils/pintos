@@ -619,19 +619,9 @@ sub run_qemu {
       if $vga eq 'terminal';
     print "warning: qemu doesn't support jitter\n"
       if defined $jitter;
+    my (@cmd) = ('qemu-system-i386');
+    push (@cmd, '-device', 'isa-debug-exit');
 
-    # on newer systems (e.g. Ubuntu 14.04) there are
-    # various versions of qemu for different platforms available.
-    # if there are multiple versions, we should select the
-    # complete system emulator for i386 platforms.
-    my ($qemu) = find_in_path ("qemu");
-    if (!defined $qemu) {
-        $qemu = find_in_path("qemu-system-i386");
-        die "unable to autodetect qemu. please check if it is installed\n"
-          if !defined $qemu;
-    }
-
-    my (@cmd) = ($qemu);
     push (@cmd, '-hda', $disks[0]) if defined $disks[0];
     push (@cmd, '-hdb', $disks[1]) if defined $disks[1];
     push (@cmd, '-hdc', $disks[2]) if defined $disks[2];
@@ -870,7 +860,11 @@ sub xsystem {
 	    exit 0;
 	}
 
-	return $?;
+        # Kind of a gross hack, because qemu's isa-debug-exit device
+        # only allows odd-numbered exit values, so we can't exit
+        # cleanly with 0.  We use exit status 0x63 as an alternate
+        # "clean" exit status.
+	return ($? != 0x6300) && $?;
     }
 }
 
